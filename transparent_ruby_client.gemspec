@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Gem::Specification.new do |s|
   s.name = 'transparent_ruby_client'
   s.version = '0.1.0'
