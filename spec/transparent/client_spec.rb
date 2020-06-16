@@ -25,8 +25,8 @@ RSpec.describe Transparent::Client do
         ).with(
           query: req_params,
           headers: {
-            'Expect'=>'',
-            'User-Agent'=>'Typhoeus - https://github.com/typhoeus/typhoeus'
+            'Expect' => '',
+            'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
           }
         ).to_return(status: http_status, body: body, headers: {})
       end
