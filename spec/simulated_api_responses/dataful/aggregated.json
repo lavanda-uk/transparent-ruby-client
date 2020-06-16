@@ -1,0 +1,80 @@
+{
+  "num_listings": 1,
+  "year_average_revenue": 28585,
+  "year_average_adr": 318,
+  "year_average_occupancy": 0.36000001430511475,
+  "monthly_metrics": [
+    {
+      "month": "january",
+      "average_revenue": 4648,
+      "average_adr": 332,
+      "average_occupancy": 0.4699999988079071
+    },
+    {
+      "month": "february",
+      "average_revenue": 0,
+      "average_adr": 0,
+      "average_occupancy": 0
+    },
+    {
+      "month": "march",
+      "average_revenue": 1304,
+      "average_adr": 326,
+      "average_occupancy": 0.28999999165534973
+    },
+    {
+      "month": "april",
+      "average_revenue": 3761,
+      "average_adr": 313,
+      "average_occupancy": 0.5699999928474426
+    },
+    {
+      "month": "may",
+      "average_revenue": 990,
+      "average_adr": 330,
+      "average_occupancy": 0.14000000059604645
+    },
+    {
+      "month": "june",
+      "average_revenue": 5565,
+      "average_adr": 327,
+      "average_occupancy": 0.7699999809265137
+    },
+    {
+      "month": "july",
+      "average_revenue": 2195,
+      "average_adr": 314,
+      "average_occupancy": 0.4699999988079071
+    },
+    {
+      "month": "august",
+      "average_revenue": 0,
+      "average_adr": 0,
+      "average_occupancy": 0
+    },
+    {
+      "month": "september",
+      "average_revenue": 975,
+      "average_adr": 325,
+      "average_occupancy": 0.30000001192092896
+    },
+    {
+      "month": "october",
+      "average_revenue": 4264,
+      "average_adr": 305,
+      "average_occupancy": 0.44999998807907104
+    },
+    {
+      "month": "november",
+      "average_revenue": 1953,
+      "average_adr": 279,
+      "average_occupancy": 0.23000000417232513
+    },
+    {
+      "month": "december",
+      "average_revenue": 2930,
+      "average_adr": 326,
+      "average_occupancy": 0.28999999165534973
+    }
+  ]
+}
