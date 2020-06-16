@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Transparent
+  # API wrapper/client
   class Client
     def aggregated(latitude:, longitude:, radius_meters:, type:, subtype:)
       response = Typhoeus.get(
