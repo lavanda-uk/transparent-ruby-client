@@ -14,28 +14,34 @@ module Transparent
     def aggregated
       aggregated_request.run
 
-      return if aggregated_response.body.empty?
+      return { fulfilled: false } if aggregated_response.body.empty? || !aggregated_response.success?
 
       {
-        adr: aggregated_object['year_average_adr'],
-        occupancy: aggregated_object['year_average_occupancy']
+        fulfilled: true,
+        data: {
+          adr: aggregated_object['year_average_adr'],
+          occupancy: aggregated_object['year_average_occupancy']
+        }
       }
     end
 
     def combined
       parallel_listings_and_aggregated_requests.run
 
-      return unless both_responses_have_content?
+      return { fulfilled: false } unless both_responses_are_good?
 
       {
-        adr: aggregated_object['year_average_adr'],
-        occupancy: aggregated_object['year_average_occupancy'],
-        listings: listings_object.map do |listing|
-          {
-            adr: listing['year_total_revenue'].to_f / listing['active_days'],
-            occupancy: listing['year_total_occupancy']
-          }
-        end
+        fulfilled: true,
+        data: {
+          adr: aggregated_object['year_average_adr'],
+          occupancy: aggregated_object['year_average_occupancy'],
+          listings: listings_object.map do |listing|
+            {
+              adr: listing['year_total_revenue'].to_f / listing['active_days'],
+              occupancy: listing['year_total_occupancy']
+            }
+          end
+        }
       }
     end
 
@@ -43,8 +49,9 @@ module Transparent
 
     attr_reader :latitude, :longitude, :radius_meters, :type, :subtype
 
-    def both_responses_have_content?
-      [aggregated_response, listings_response].none? { |r| r.body.empty? }
+    def both_responses_are_good?
+      [aggregated_response, listings_response].all?(&:success?) &&
+        [aggregated_response, listings_response].none? { |r| r.body.empty? }
     end
 
     def parallel_listings_and_aggregated_requests
