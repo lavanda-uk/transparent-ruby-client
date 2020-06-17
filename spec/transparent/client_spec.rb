@@ -15,25 +15,41 @@ RSpec.describe Transparent::Client do
   end
 
   context '#aggregated' do
-    context 'when API returns OK response' do
-      let(:body) { '' }
-      let(:http_status) { 200 }
-      let(:expected_http_req) do
-        stub_request(
-          :get,
-          Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:aggregated]
-        ).with(
-          query: req_params,
-          headers: {
-            'Expect' => '',
-            'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
-          }
-        ).to_return(status: http_status, body: body, headers: {})
+    let(:body) { '' }
+    let(:expected_http_req) do
+      stub_request(
+        :get,
+        Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:aggregated]
+      ).with(
+        query: req_params,
+        headers: {
+          'Expect' => '',
+          'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
+        }
+      ).to_return(status: http_status, body: body, headers: {})
+    end
+
+    before do
+      expected_http_req
+    end
+
+    context 'when API produces an error response' do
+      [400, 404, 500, 503].each do |http_status|
+        let(:http_status) { http_status }
+        let(:body) { { error: 'message' }.to_json }
+
+        it 'returns unfulfillable response' do
+          expect(
+            described_class.new(**req_params).aggregated[:fulfilled]
+          ).to eq(false)
+        end
       end
+    end
+
+    context 'when API returns OK response' do
+      let(:http_status) { 200 }
 
       it 'requests aggregated pricing via http' do
-        expected_http_req
-
         described_class.new(**req_params).aggregated
 
         assert_requested(expected_http_req)
@@ -41,11 +57,9 @@ RSpec.describe Transparent::Client do
 
       context 'when API returns empty body response' do
         it 'returns nil' do
-          expected_http_req
-
           expect(
-            described_class.new(**req_params).aggregated
-          ).to be_nil
+            described_class.new(**req_params).aggregated[:fulfilled]
+          ).to eq(false)
         end
       end
 
@@ -53,9 +67,9 @@ RSpec.describe Transparent::Client do
         let(:body) { File.read('spec/simulated_api_responses/dataful/aggregated.json') }
 
         it 'fetches aggregated pricing data' do
-          expected_http_req
+          expect(described_class.new(**req_params).aggregated[:fulfilled]).to eq(true)
 
-          expect(described_class.new(**req_params).aggregated).to eq(
+          expect(described_class.new(**req_params).aggregated[:data]).to eq(
             adr: 318,
             occupancy: 0.36000001430511475
           )
@@ -65,41 +79,54 @@ RSpec.describe Transparent::Client do
   end
 
   context '#combined' do
+    let(:listings_body) { '' }
+    let(:listings_http_status) { 200 }
+    let(:expected_listings_http_req) do
+      stub_request(
+        :get,
+        Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:listings]
+      ).with(
+        query: req_params,
+        headers: {
+          'Expect' => '',
+          'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
+        }
+      ).to_return(status: listings_http_status, body: listings_body, headers: {})
+    end
+
+    let(:aggregated_body) { '' }
+    let(:aggregated_http_status) { 200 }
+    let(:expected_aggregated_http_req) do
+      stub_request(
+        :get,
+        Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:aggregated]
+      ).with(
+        query: req_params,
+        headers: {
+          'Expect' => '',
+          'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
+        }
+      ).to_return(status: aggregated_http_status, body: aggregated_body, headers: {})
+    end
+
+    before do
+      expected_listings_http_req && expected_aggregated_http_req
+    end
+
+    context 'when API produces at least one error response' do
+      [400, 404, 500, 503].each do |http_status|
+        let(:aggregated_http_status) { http_status }
+        let(:aggregated_body) { { error: 'message' }.to_json }
+
+        it 'returns unfulfillable response' do
+          expect(
+            described_class.new(**req_params).combined[:fulfilled]
+          ).to eq(false)
+        end
+      end
+    end
+
     context 'when API returns OK responses' do
-      let(:listings_body) { '' }
-      let(:listings_http_status) { 200 }
-      let(:expected_listings_http_req) do
-        stub_request(
-          :get,
-          Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:listings]
-        ).with(
-          query: req_params,
-          headers: {
-            'Expect' => '',
-            'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
-          }
-        ).to_return(status: listings_http_status, body: listings_body, headers: {})
-      end
-
-      let(:aggregated_body) { '' }
-      let(:aggregated_http_status) { 200 }
-      let(:expected_aggregated_http_req) do
-        stub_request(
-          :get,
-          Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:aggregated]
-        ).with(
-          query: req_params,
-          headers: {
-            'Expect' => '',
-            'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
-          }
-        ).to_return(status: aggregated_http_status, body: aggregated_body, headers: {})
-      end
-
-      before do
-        expected_listings_http_req && expected_aggregated_http_req
-      end
-
       it 'requests aggregated and listings pricing via http' do
         described_class.new(**req_params).combined
 
@@ -110,8 +137,8 @@ RSpec.describe Transparent::Client do
       context 'when API returns empty body responses' do
         it 'returns nil' do
           expect(
-            described_class.new(**req_params).combined
-          ).to be_nil
+            described_class.new(**req_params).combined[:fulfilled]
+          ).to eq(false)
         end
       end
 
@@ -120,7 +147,8 @@ RSpec.describe Transparent::Client do
         let(:listings_body) { File.read('spec/simulated_api_responses/dataful/listings.json') }
 
         it 'fetches combined pricing data' do
-          expect(described_class.new(**req_params).combined).to eq(
+          expect(described_class.new(**req_params).combined[:fulfilled]).to eq(true)
+          expect(described_class.new(**req_params).combined[:data]).to eq(
             adr: 318,
             occupancy: 0.36000001430511475,
             listings: [
