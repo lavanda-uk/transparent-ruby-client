@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'transparent/constants'
+
 module Transparent
   # API wrapper/client
   class Client
@@ -83,6 +85,9 @@ module Transparent
       @listings_request ||= Typhoeus::Request.new(
         Constants::BASE_URI + Constants::ENDPOINT_URIS[:listings],
         method: :get,
+        headers: {
+          apikey: Transparent.configuration.apikey
+        },
         params: {
           latitude: latitude,
           longitude: longitude,
@@ -97,6 +102,9 @@ module Transparent
       @aggregated_request ||= Typhoeus::Request.new(
         Constants::BASE_URI + Constants::ENDPOINT_URIS[:aggregated],
         method: :get,
+        headers: {
+          apikey: Transparent.configuration.apikey
+        },
         params: {
           latitude: latitude,
           longitude: longitude,
