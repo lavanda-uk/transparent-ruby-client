@@ -4,6 +4,12 @@ require 'transparent/constants'
 require 'transparent/client'
 
 RSpec.describe Transparent::Client do
+  before do
+    Transparent.configure do |config|
+      config.apikey = 'fake-api-key'
+    end
+  end
+
   let(:req_params) do
     {
       latitude: '51.5099904',
