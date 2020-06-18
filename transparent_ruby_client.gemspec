@@ -11,4 +11,6 @@ Gem::Specification.new do |s|
   s.files         = Dir['lib/transparent.rb', 'lib/**/*']
   s.homepage      = 'https://rubygems.org/gems/transparent_ruby_client'
   s.license       = 'MIT'
+
+  s.add_runtime_dependency     'sorbet-runtime', '~> 0.5'
 end
