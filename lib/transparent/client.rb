@@ -5,12 +5,41 @@ require 'transparent/constants'
 module Transparent
   # API wrapper/client
   class Client
-    def initialize(latitude:, longitude:, radius_meters:, type:, subtype:)
+    def initialize(
+      latitude:,
+      longitude:,
+      radius_meters:,
+      type:,
+      subtype:,
+      bedrooms: [],
+      bathrooms: [],
+      capacity: [],
+      pool: nil,
+      air_conditioning: nil,
+      kid_friendly: nil,
+      parking: nil,
+      hot_tub: nil,
+      active_days: nil
+    )
       @latitude = latitude
       @longitude = longitude
       @radius_meters = radius_meters
       @type = type
       @subtype = subtype
+
+      @optional_params = {
+        bedrooms: bedrooms.join(','),
+        bathrooms: bathrooms.join(','),
+        capacity: capacity.join(','),
+        pool: normalise_boolean(pool),
+        air_conditioning: normalise_boolean(air_conditioning),
+        kid_friendly: normalise_boolean(kid_friendly),
+        parking: normalise_boolean(parking),
+        hot_tub: normalise_boolean(hot_tub),
+        active_days: active_days
+      }.select do |_key, value|
+        value && !value.to_s.empty?
+      end
     end
 
     def aggregated
@@ -49,7 +78,13 @@ module Transparent
 
     private
 
-    attr_reader :latitude, :longitude, :radius_meters, :type, :subtype
+    attr_reader :latitude, :longitude, :radius_meters, :type, :subtype, :optional_params
+
+    def normalise_boolean(value)
+      return nil unless value
+
+      !!value ? 1 : 0
+    end
 
     def both_responses_are_good?
       [aggregated_response, listings_response].all?(&:success?) &&
@@ -94,7 +129,7 @@ module Transparent
           radius_meters: radius_meters,
           type: type,
           subtype: subtype
-        }
+        }.merge(optional_params)
       )
     end
 
@@ -111,7 +146,7 @@ module Transparent
           radius_meters: radius_meters,
           type: type,
           subtype: subtype
-        }
+        }.merge(optional_params)
       )
     end
   end

@@ -20,6 +20,8 @@ RSpec.describe Transparent::Client do
     }
   end
 
+  let(:expected_query_params) { req_params }
+
   context '#aggregated' do
     let(:body) { '' }
     let(:expected_http_req) do
@@ -27,7 +29,7 @@ RSpec.describe Transparent::Client do
         :get,
         Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:aggregated]
       ).with(
-        query: req_params,
+        query: expected_query_params,
         headers: {
           'Expect' => '',
           'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
@@ -37,6 +39,47 @@ RSpec.describe Transparent::Client do
 
     before do
       expected_http_req
+    end
+
+    context 'when optional params are passed' do
+      let(:req_params) do
+        {
+          latitude: '51.5099904',
+          longitude: '-0.12967951',
+          radius_meters: 1000,
+          type: 'ENTIRE_HOME',
+          subtype: 'APARTMENT',
+          bedrooms: [3, 4, 5],
+          capacity: [8, 9],
+          bathrooms: [2, 3, 4],
+          active_days: nil,
+          hot_tub: '',
+          parking: true,
+          kid_friendly: nil,
+          air_conditioning: false
+        }
+      end
+
+      let(:http_status) { 200 }
+      let(:expected_http_req) do
+        stub_request(
+          :get,
+          Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:aggregated] +
+          '?bathrooms=2,3,4&bedrooms=3,4,5&capacity=8,9&hot_tub=1&latitude=51.5099904&' \
+          'longitude=-0.12967951&parking=1&radius_meters=1000&subtype=APARTMENT&type=ENTIRE_HOME'
+        ).with(
+          headers: {
+            'Expect' => '',
+            'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
+          }
+        ).to_return(status: http_status, body: body, headers: {})
+      end
+
+      it 'removes nil or empty params and transforms list params' do
+        described_class.new(**req_params).aggregated
+
+        assert_requested(expected_http_req)
+      end
     end
 
     context 'when API produces an error response' do
@@ -92,7 +135,7 @@ RSpec.describe Transparent::Client do
         :get,
         Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:listings]
       ).with(
-        query: req_params,
+        query: expected_query_params,
         headers: {
           'Expect' => '',
           'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
@@ -107,7 +150,7 @@ RSpec.describe Transparent::Client do
         :get,
         Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:aggregated]
       ).with(
-        query: req_params,
+        query: expected_query_params,
         headers: {
           'Expect' => '',
           'User-Agent' => 'Typhoeus - https://github.com/typhoeus/typhoeus'
