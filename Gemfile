@@ -11,3 +11,6 @@ gem 'rspec', '~> 3.9'
 gem 'webmock', '~> 3.8'
 
 gem 'typhoeus', '~> 1.4'
+
+gem 'sorbet', group: :development
+gem 'sorbet-runtime'
