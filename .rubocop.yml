@@ -1,9 +1,12 @@
-Metrics/MethodLength:
-  Max: 20
-
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/MethodLength:
+  Max: 20
 
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
@@ -43,3 +46,6 @@ Style/RedundantRegexpEscape:
 
 Style/SlicingWithRange:
   Enabled: true
+
+Metrics/ParameterLists:
+  Enabled: false
