@@ -46,7 +46,7 @@ RSpec.describe Transparent::Client do
       let(:http_status) { 200 }
       let(:body) { '' }
 
-      it 'raises a type errro' do
+      it 'raises a type error' do
         expect do
           described_class.new(
             {
