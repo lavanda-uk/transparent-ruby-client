@@ -1,8 +1,8 @@
 # typed: true
 # frozen_string_literal: true
 
-require 'transparent/configuration'
-require 'transparent/client'
+require_relative 'transparent/configuration'
+require_relative 'transparent/client'
 
 # This module will expose the API client
 module Transparent

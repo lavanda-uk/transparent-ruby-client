@@ -1,7 +1,7 @@
 # typed: true
 # frozen_string_literal: true
 
-require 'transparent/constants'
+require_relative 'constants'
 require 'sorbet-runtime'
 
 module Transparent
