@@ -2,8 +2,8 @@
 
 Gem::Specification.new do |s|
   s.name = 'transparent_ruby_client'
-  s.version = '0.1.4'
-  s.date = '2020-06-15'
+  s.version = '0.1.5'
+  s.date = '2020-06-19'
   s.summary       = 'A ruby client for https://listingroiapi.seetransparent.com/'
   s.description   = 'A ruby client for https://listingroiapi.seetransparent.com/'
   s.require_paths = ['lib']
