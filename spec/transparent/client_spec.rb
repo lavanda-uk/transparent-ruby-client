@@ -42,7 +42,7 @@ RSpec.describe Transparent::Client do
       expected_http_req
     end
 
-    context 'when mandatory params are not passed' do
+    context 'when type of mandatory params are unexpected' do
       let(:http_status) { 200 }
       let(:body) { '' }
 
