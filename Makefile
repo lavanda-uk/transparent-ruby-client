@@ -5,6 +5,12 @@ install:
 build:
 	gem build transparent_ruby_client
 
+clean:
+	rm -fr transparent_ruby_client*.gem
+
+push:
+	gem push transparent_ruby_client*.gem
+
 check: sorbet-check lint test
 	@echo 'Checked!'
 
