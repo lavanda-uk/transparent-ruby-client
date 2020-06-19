@@ -62,8 +62,8 @@ PLATFORMS
 DEPENDENCIES
   rspec (~> 3.9)
   rubocop (~> 0.85.1)
-  sorbet
-  sorbet-runtime
+  sorbet (~> 0.5)
+  sorbet-runtime (~> 0.5)
   typhoeus (~> 1.4)
   webmock (~> 3.8)
 

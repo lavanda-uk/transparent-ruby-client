@@ -13,4 +13,10 @@ Gem::Specification.new do |s|
   s.license       = 'MIT'
 
   s.add_runtime_dependency     'sorbet-runtime', '~> 0.5'
+
+  s.add_development_dependency 'rspec', '~> 3.9'
+  s.add_development_dependency 'rubocop', '~> 0.85.1'
+  s.add_development_dependency 'sorbet', '~> 0.5'
+  s.add_development_dependency 'typhoeus', '~> 1.4'
+  s.add_development_dependency 'webmock', '~> 3.8'
 end
