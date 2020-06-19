@@ -2,10 +2,31 @@
 # frozen_string_literal: true
 
 require 'transparent/constants'
+require 'sorbet-runtime'
 
 module Transparent
   # API wrapper/client
   class Client
+    extend T::Sig
+
+    sig do
+      params(
+        latitude: Float,
+        longitude: Float,
+        radius_meters: Integer,
+        type: String,
+        subtype: String,
+        bedrooms: T.nilable(T::Array[T.untyped]),
+        bathrooms: T.nilable(T::Array[T.untyped]),
+        capacity: T.nilable(T::Array[T.untyped]),
+        pool: T.nilable(T::Boolean),
+        air_conditioning: T.nilable(T::Boolean),
+        kid_friendly: T.nilable(T::Boolean),
+        parking: T.nilable(T::Boolean),
+        hot_tub: T.nilable(T::Boolean),
+        active_days: T.nilable(T::Boolean)
+      ).returns(Hash)
+    end
     def initialize(
       latitude:,
       longitude:,
@@ -29,9 +50,9 @@ module Transparent
       @subtype = subtype
 
       @optional_params = {
-        bedrooms: bedrooms.join(','),
-        bathrooms: bathrooms.join(','),
-        capacity: capacity.join(','),
+        bedrooms: normalise_list(bedrooms),
+        bathrooms: normalise_list(bathrooms),
+        capacity: normalise_list(capacity),
         pool: normalise_boolean(pool),
         air_conditioning: normalise_boolean(air_conditioning),
         kid_friendly: normalise_boolean(kid_friendly),
@@ -80,6 +101,10 @@ module Transparent
     private
 
     attr_reader :latitude, :longitude, :radius_meters, :type, :subtype, :optional_params
+
+    def normalise_list(value)
+      T.must(value).join(',')
+    end
 
     def normalise_boolean(value)
       return nil unless value

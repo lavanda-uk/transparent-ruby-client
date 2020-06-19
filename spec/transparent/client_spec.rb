@@ -13,8 +13,8 @@ RSpec.describe Transparent::Client do
 
   let(:req_params) do
     {
-      latitude: '51.5099904',
-      longitude: '-0.12967951',
+      latitude: 51.5099904,
+      longitude: -0.12967951,
       radius_meters: 1000,
       type: 'ENTIRE_HOME',
       subtype: 'APARTMENT'
@@ -42,11 +42,33 @@ RSpec.describe Transparent::Client do
       expected_http_req
     end
 
+    context 'when mandatory params are not passed' do
+      let(:http_status) { 200 }
+      let(:body) { '' }
+
+      it 'raises a type error' do
+        expect do
+          described_class.new(
+            {
+              latitude: 'wrong',
+              longitude: 3.093,
+              radius_meters: 1000,
+              type: '',
+              subtype: ''
+            }
+          )
+        end.to raise_error(
+          TypeError,
+          /Parameter 'latitude': Expected type Float, got type String/
+        )
+      end
+    end
+
     context 'when optional params are passed' do
       let(:req_params) do
         {
-          latitude: '51.5099904',
-          longitude: '-0.12967951',
+          latitude: 51.5099904,
+          longitude: -0.12967951,
           radius_meters: 1000,
           type: 'ENTIRE_HOME',
           subtype: 'APARTMENT',
@@ -54,7 +76,7 @@ RSpec.describe Transparent::Client do
           capacity: [8, 9],
           bathrooms: [2, 3, 4],
           active_days: nil,
-          hot_tub: '',
+          hot_tub: nil,
           parking: true,
           kid_friendly: nil,
           air_conditioning: false
@@ -66,7 +88,7 @@ RSpec.describe Transparent::Client do
         stub_request(
           :get,
           Transparent::Constants::BASE_URI + Transparent::Constants::ENDPOINT_URIS[:aggregated] +
-          '?bathrooms=2,3,4&bedrooms=3,4,5&capacity=8,9&hot_tub=1&latitude=51.5099904&' \
+          '?bathrooms=2,3,4&bedrooms=3,4,5&capacity=8,9&latitude=51.5099904&' \
           'longitude=-0.12967951&parking=1&radius_meters=1000&subtype=APARTMENT&type=ENTIRE_HOME'
         ).with(
           headers: {
