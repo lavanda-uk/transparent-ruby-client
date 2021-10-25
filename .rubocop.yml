@@ -11,6 +11,9 @@ Metrics/MethodLength:
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
 
+Layout/LineLength:
+  Enabled: false
+
 Layout/SpaceAroundMethodCallOperator:
   Enabled: true
 
